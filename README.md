@@ -31,17 +31,3 @@ This project is intended for practicing **loops, string operations, and pattern 
 - Diamond pattern  
 - Square pattern  
 
-Each pattern is separated using:
-
-
----
-
-## 🧩 Patterns Included
-
-- Left-aligned triangle  
-- Right-aligned triangle  
-- Centered pyramid  
-- Diamond pattern  
-- Square pattern  
-
-Each pattern is separated using:
