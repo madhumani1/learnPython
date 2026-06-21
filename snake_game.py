@@ -7,6 +7,23 @@ CELL_SIZE = 20
 WIDTH = 640
 HEIGHT = 480
 FPS = 10
+HIGH_SCORE_FILE = 'high_score.txt'
+
+
+def load_high_score():
+    try:
+        with open(HIGH_SCORE_FILE, 'r', encoding='utf-8') as handle:
+            return max(0, int(handle.read().strip() or 0))
+    except (OSError, ValueError):
+        return 0
+
+
+def save_high_score(score):
+    try:
+        with open(HIGH_SCORE_FILE, 'w', encoding='utf-8') as handle:
+            handle.write(str(score))
+    except OSError:
+        pass
 
 
 def place_apple(snake):
@@ -37,6 +54,8 @@ def game_loop():
     direction = 'RIGHT'
     apple = place_apple(snake)
     score = 0
+    high_score = load_high_score()
+    paused = False
     game_over = False
 
     while True:
@@ -53,13 +72,15 @@ def game_loop():
                     direction = 'LEFT'
                 elif event.key in (pygame.K_RIGHT, pygame.K_d) and direction != 'LEFT':
                     direction = 'RIGHT'
+                elif event.key in (pygame.K_p, pygame.K_SPACE) and not game_over:
+                    paused = not paused
                 elif event.key == pygame.K_r and game_over:
                     return True  # restart
                 elif event.key == pygame.K_q and game_over:
                     pygame.quit()
                     sys.exit()
 
-        if not game_over:
+        if not game_over and not paused:
             head_x, head_y = snake[0]
             if direction == 'UP':
                 head_y -= CELL_SIZE
@@ -84,6 +105,9 @@ def game_loop():
 
             if new_head == apple:
                 score += 1
+                if score > high_score:
+                    high_score = score
+                    save_high_score(high_score)
                 apple = place_apple(snake)
             else:
                 snake.pop()
@@ -98,6 +122,12 @@ def game_loop():
             pygame.draw.rect(screen, color, (part[0], part[1], CELL_SIZE, CELL_SIZE))
 
         draw_text(screen, f'Score: {score}', 30, (255, 255, 255), (10, 10))
+        draw_text(screen, f'Best: {high_score}', 30, (255, 255, 255), (WIDTH - 180, 10))
+        draw_text(screen, 'P = Pause', 24, (200, 200, 200), (10, HEIGHT - 34))
+
+        if paused and not game_over:
+            draw_text(screen, 'Paused', 64, (255, 255, 0), (WIDTH // 2 - 100, HEIGHT // 2 - 40))
+            draw_text(screen, 'Press P or Space to resume', 24, (255, 255, 255), (WIDTH // 2 - 170, HEIGHT // 2 + 30))
 
         if game_over:
             draw_text(screen, 'Game Over', 64, (255, 50, 50), (WIDTH // 2 - 140, HEIGHT // 2 - 40))

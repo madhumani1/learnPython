@@ -25,7 +25,12 @@ pip install -r requirements.txt
 python3 snake_game.py
 ```
 
-4. Complete commands:
+4. Persistent high score:
+
+- The game stores the all-time best score in `high_score.txt`.
+- The highest score is shown in the top-right corner.
+
+5. Complete commands:
 ```bash
 # Install system venv support on Debian/Ubuntu if needed:
 sudo apt update
